@@ -1,148 +1,151 @@
 import java.io.*;
 
+// << Lexer >>
 public class Lexer {
-
-    private boolean isEof = false;
-    private char ch = ' '; 
+    // < Field >
+    //private boolean isEof = false;
+    private char ch = ' ';
     private BufferedReader input;
     private String line = "";
-    private int lineno = 0;
+    //private int lineNo = 0;
     private int col = 1;
-    private final String letters = "abcdefghijklmnopqrstuvwxyz"
-        + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final String letters = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final String digits = "0123456789";
     private final char eolnCh = '\n';
     private final char eofCh = '\004';
-    
 
-    public Lexer (String fileName) { // source filename
+    // < Constructor >
+    public Lexer(String fileName) {
         try {
-            input = new BufferedReader (new FileReader(fileName));
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("File not found: " + fileName);
+            input = new BufferedReader(new FileReader(fileName));
+        } catch(FileNotFoundException fnfe) {
+            System.out.println("File not found : " + fileName);
             System.exit(1);
         }
     }
 
-    /* 한 줄을 한 문자씩 처리 */
-    private char nextChar() { // Return next char
-        if (ch == eofCh)
+    // < nextChar >
+    private char nextChar() {
+        if(ch == eofCh)
             error("Attempt to read past end of file");
         col++;
-        if (col >= line.length()) {
+        if(col >= line.length()) {
             try {
-                line = input.readLine( );
-            } catch (IOException e) {
-                System.err.println(e);
+                line = input.readLine();
+            } catch(IOException ioe) {
+                System.err.println(ioe);
                 System.exit(1);
-            } // try
-            if (line == null) // at end of file
+            }
+            if(line == null)
                 line = "" + eofCh;
             else {
-                // System.out.println(lineno + ":\t" + line);
-                lineno++;
+                //lineNo++;
                 line += eolnCh;
-            } // if line
+            }
             col = 0;
-        } // if col
+        }
         return line.charAt(col);
     }
-            
-    /* Important */
-    public Token next( ) { // Return next token
+
+    // < Token >
+    public Token next() {
         do {
-            if (isLetter(ch)) { // identifier or keyword
-                String spelling = concat(letters + digits); // Letter나 Digit이 나오면 계속해서 concat
+            if(isLetter(ch)) {                                  // Identifier or Keyword
+                String spelling = concat(letters + digits);     // Letter or Digit이면 concat
                 return Token.keyword(spelling);
-            } else if (isDigit(ch)) { // int or float literal
+            } else if(isDigit(ch)) {
                 String number = concat(digits);
-                if (ch != '.')  // int Literal
+                if(ch != '.')
                     return Token.mkIntLiteral(number);
                 number += concat(digits);
                 return Token.mkFloatLiteral(number);
-            } else switch (ch) {
-            case ' ': case '\t': case '\r': case eolnCh:        // Whitespace
-                ch = nextChar();
-                break;
-            
-            case '/':  // divide or comment
-                ch = nextChar();
-                if (ch != '/')  return Token.divideTok;
-                // comment
-                do {
+            } else switch(ch) {
+                case ' ': case '\t': case '\r': case eolnCh: ch = nextChar(); break;    // Whitespace
+                
+                case '/':
                     ch = nextChar();
-                } while (ch != eolnCh);
-                ch = nextChar();
-                break;
-            
-            case '\'':  // char literal
-                char ch1 = nextChar();
-                nextChar(); // get '
-                ch = nextChar();
-                return Token.mkCharLiteral("" + ch1);
+                    if(ch != '/') return Token.divideTok;
+                    do ch = nextChar();
+                    while(ch != eolnCh);
+                    ch = nextChar();
+                    break;
                 
-            case eofCh: return Token.eofTok;
-            
-            case '+': ch = nextChar();
-                return Token.plusTok;
-
-                // - * ( ) { } ; ,  student exercise 
+                case '\'':
+                    char ch1 = nextChar();
+                    nextChar();
+                    ch = nextChar();
+                    return Token.mkCharLiteral("" + ch1);
                 
-            case '&': check('&'); return Token.andTok;
-            case '|': check('|'); return Token.orTok;
+                case eofCh: return Token.eofTok;
 
-            case '=':
-                return chkOpt('=', Token.assignTok,
-                                   Token.eqeqTok);
-                // < > !  student exercise 
+                case '+': ch = nextChar(); return Token.plusTok;
+                case '-': ch = nextChar(); return Token.minusTok;
+                case '*': ch = nextChar(); return Token.multiplyTok;
+                case '(': ch = nextChar(); return Token.leftParenTok;
+                case ')': ch = nextChar(); return Token.rightParenTok;
+                case '{': ch = nextChar(); return Token.leftBraceTok;
+                case '}': ch = nextChar(); return Token.rightBraceTok;
+                case ';': ch = nextChar(); return Token.semicolonTok;
+                case ',': ch = nextChar(); return Token.commaTok;
 
-            default:  error("Illegal character " + ch); 
-            } // switch
-        } while (true);
-    } // next
+                case '&': check('&'); return Token.andTok;
+                case '|': check('|'); return Token.orTok;
+                case '=': return chkOpt('=', Token.assignTok, Token.eqeqTok);
+                case '<': return chkOpt('=', Token.ltTok, Token.lteqTok);
+                case '>': return chkOpt('=', Token.gtTok, Token.gteqTok);
+                case '!': return chkOpt('=', Token.notTok, Token.noteqTok);
+                default: error("Illegal character " + ch);
+            }
+        } while(true);
+    }
 
-
+    // < Check if c is a letter >
     private boolean isLetter(char c) {
-        return (c>='a' && c<='z' || c>='A' && c<='Z');
-    }
-  
-    private boolean isDigit(char c) {
-        return false;  // student exercise 0 ~ 9
+        return ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z');
     }
 
+    // < Check if c is a digid >
+    private boolean isDigit(char c) {
+        return ('0' <= c && c <= '9');
+    }
+
+    // < Check >
     private void check(char c) {
         ch = nextChar();
-        if (ch != c) 
-            error("Illegal character, expecting " + c);
+        if(ch != c) error("Illegal character, expecting " + c);
         ch = nextChar();
     }
 
+    // < Check Optional >
     private Token chkOpt(char c, Token one, Token two) {
-        return null;  // student exercise c가 아니면 one c이면 two
+        ch = nextChar();
+        return ch == c ? two : one;
     }
 
+
+    // < Concat >
     private String concat(String set) {
         String r = "";
         do {
             r += ch;
             ch = nextChar();
-        } while (set.indexOf(ch) >= 0);
+        } while(set.indexOf(ch) >= 0);
         return r;
     }
 
-    public void error (String msg) {
+    // < Error >
+    public void error(String msg) {
         System.err.print(line);
-        System.err.println("Error: column " + col + " " + msg);
+        System.err.println("Error : column " + col + " " + msg);
         System.exit(1);
     }
 
-    static public void main ( String[] argv ) {
-        Lexer lexer = new Lexer(argv[0]);
+    public static void main(String[] args) {
+        Lexer lexer = new Lexer(args[0]);
         Token tok = lexer.next( );
         while (tok != Token.eofTok) {
             System.out.println(tok.toString());
             tok = lexer.next( );
-        } 
-    } // main
+        }
+    }
 }
