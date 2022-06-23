@@ -1,7 +1,7 @@
-// Following is the semantics class
+package self;// Following is the semantics class
 // for a dynamically typed language.
-// The meaning M of a Statement is a State.
-// The meaning M of a Expression is a Value.
+// The meaning M of a self.Statement is a self.State.
+// The meaning M of a self.Expression is a self.Value.
 
 public class DynamicTyping extends Semantics {
     
@@ -73,7 +73,7 @@ public class DynamicTyping extends Semantics {
         // prog.display();    // student exercise
         DynamicTyping dynamic = new DynamicTyping( );
         State state = dynamic.M(prog);
-        System.out.println("Final State");
+        System.out.println("Final self.State");
         // state.display( );   // student exercise
     }
 }

@@ -1,6 +1,6 @@
-// Following is the semantics class:
-// The meaning M of a Statement is a State
-// The meaning M of a Expression is a Value
+package self;// Following is the semantics class:
+// The meaning M of a self.Statement is a self.State
+// The meaning M of a self.Expression is a self.Value
 
 public class Semantics {
 
@@ -10,7 +10,7 @@ public class Semantics {
 
     State initialState(Declarations d) {
         State state = new State();
-        // Value intUndef = new IntValue(); Not used
+        // self.Value intUndef = new self.IntValue(); Not used
         for (Declaration decl : d)
             state.put(decl.v, Value.mkValue(decl.t));
         return state;
@@ -153,7 +153,7 @@ public class Semantics {
         Program prog = parser.program();
         prog.display(0); // student exercise
         System.out.println("\nBegin type checking...");
-        System.out.println("Type map:");
+        System.out.println("self.Type map:");
         TypeMap map = StaticTypeCheck.typing(prog.decpart);
         map.display(); // student exercise
         StaticTypeCheck.V(prog);
@@ -162,7 +162,7 @@ public class Semantics {
         out.display(0); // student exercise
         Semantics semantics = new Semantics();
         State state = semantics.M(out);
-        System.out.println("Final State");
+        System.out.println("Final self.State");
         state.display(); // student exercise
     }
 }

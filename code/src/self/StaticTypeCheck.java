@@ -1,4 +1,4 @@
-// StaticTypeCheck.java
+package self;// self.StaticTypeCheck.java
 
 // Static type checking for Clite is defined by the functions 
 // V and the auxiliary functions typing and typeOf.  These
@@ -142,7 +142,7 @@ public class StaticTypeCheck {
                 V(c.elsebranch, tm);
                 return;
             } else
-                check(false, "poorly typed if in Conditional: " + c.test);
+                check(false, "poorly typed if in self.Conditional: " + c.test);
         } else if (s instanceof Loop) {
             Loop l = (Loop) s;
             V(l.test, tm);
@@ -151,7 +151,7 @@ public class StaticTypeCheck {
                 V(l.body, tm);
                 return;
             } else
-                check(false, "poorly typed test in while Loop in Conditional: " + l.test);
+                check(false, "poorly typed test in while self.Loop in self.Conditional: " + l.test);
         } else if (s instanceof Block) {
             Block b = (Block) s;
             for (Statement i : b.members)
@@ -166,11 +166,11 @@ public class StaticTypeCheck {
         Program prog = parser.program();
         prog.display(0); // student exercise
         System.out.println("\nBegin type checking...");
-        System.out.println("Type map:");
+        System.out.println("self.Type map:");
         TypeMap map = typing(prog.decpart);
         map.display(); // student exercise
         V(prog);
-        System.out.println("Type checked succefully");
+        System.out.println("self.Type checked succefully");
     } // main
 
-} // class StaticTypeCheck
+} // class self.StaticTypeCheck

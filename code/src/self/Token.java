@@ -1,3 +1,5 @@
+package self;
+
 public class Token {
 
     private static final int KEYWORDS = TokenType.Eof.ordinal();
@@ -89,4 +91,4 @@ public class Token {
         System.out.println(eofTok);
         System.out.println(whileTok);
     }
-} // Token
+} // self.Token

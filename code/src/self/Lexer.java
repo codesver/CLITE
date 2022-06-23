@@ -1,6 +1,8 @@
+package self;
+
 import java.io.*;
 
-// << Lexer >>
+// << self.Lexer >>
 public class Lexer {
     // < Field >
     //private boolean isEof = false;
@@ -47,7 +49,7 @@ public class Lexer {
         return line.charAt(col);
     }
 
-    // < Token >
+    // < self.Token >
     public Token next() {
         do {
             if(isLetter(ch)) {                                  // Identifier or Keyword

@@ -1,3 +1,5 @@
+package self;
+
 public class TypeTransformer {
 
     public static Program T(Program p, TypeMap tm) {
@@ -13,7 +15,7 @@ public class TypeTransformer {
         if (e instanceof Binary) {
             Binary b = (Binary) e;
             Type typ1 = StaticTypeCheck.typeOf(b.term1, tm);
-            //Type typ2 = StaticTypeCheck.typeOf(b.term2, tm);
+            //self.Type typ2 = self.StaticTypeCheck.typeOf(b.term2, tm);
             Expression t1 = T(b.term1, tm);
             Expression t2 = T(b.term2, tm);
             if (typ1 == Type.INT)
@@ -46,7 +48,7 @@ public class TypeTransformer {
                 return new Unary(Operator.charMap(u.op.val), t0);
             
             
-            throw new IllegalArgumentException("Malformed Unary expression");
+            throw new IllegalArgumentException("Malformed self.Unary expression");
         }
         throw new IllegalArgumentException("should never reach here");
     }
@@ -102,7 +104,7 @@ public class TypeTransformer {
         Program prog = parser.program();
         prog.display(0); // student exercise
         System.out.println("\nBegin type checking...");
-        System.out.println("Type map:");
+        System.out.println("self.Type map:");
         TypeMap map = StaticTypeCheck.typing(prog.decpart);
         map.display(); // student exercise
         StaticTypeCheck.V(prog);
@@ -111,4 +113,4 @@ public class TypeTransformer {
         out.display(0); // student exercise
     } // main
 
-} // class TypeTransformer
+} // class self.TypeTransformer

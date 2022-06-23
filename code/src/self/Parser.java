@@ -1,3 +1,5 @@
+package self;
+
 public class Parser {
     // Recursive descent parser that inputs a C++Lite program and
     // generates its abstract syntax. Each method corresponds to
@@ -9,7 +11,7 @@ public class Parser {
 
     public Parser(Lexer ts) { // Open the C++Lite source program
         lexer = ts; // as a token stream, and
-        token = lexer.next(); // retrieve its first Token
+        token = lexer.next(); // retrieve its first self.Token
     }
 
     private String match(TokenType t) {
@@ -32,7 +34,7 @@ public class Parser {
     }
 
     public Program program() {
-        // Program --> void main ( ) '{' Declarations Statements '}'
+        // self.Program --> void main ( ) '{' self.Declarations Statements '}'
         TokenType[] header = { TokenType.Int, TokenType.Main, TokenType.LeftParen, TokenType.RightParen };
         for (int i = 0; i < header.length; i++) // bypass "int main ( )"
             match(header[i]);
@@ -49,7 +51,7 @@ public class Parser {
     }
 
     private Declarations declarations() {
-        // Declarations --> { Declaration }
+        // self.Declarations --> { self.Declaration }
         Declarations declarations = new Declarations();
         while (isType())
             declaration(declarations);
@@ -57,7 +59,7 @@ public class Parser {
     }
 
     private void declaration(Declarations ds) {
-        // Declaration --> Type Identifier { , Identifier } ;
+        // self.Declaration --> self.Type Identifier { , Identifier } ;
         Type type = type();
         Variable variable = new Variable(match(TokenType.Identifier));
         Declaration declaration = new Declaration(variable, type);
@@ -72,7 +74,7 @@ public class Parser {
     }
 
     private Type type() {
-        // Type --> int | bool | float | char
+        // self.Type --> int | bool | float | char
         Type type = null;
         if (token.type().equals(TokenType.Int))
             type = Type.INT;
@@ -83,13 +85,13 @@ public class Parser {
         else if (token.type().equals(TokenType.Char))
             type = Type.CHAR;
         else
-            error("Error in Type construction");
+            error("Error in self.Type construction");
         token = lexer.next();
         return type;
     }
 
     private Statement statement() {
-        // Statement --> ; | Block | Assignment | IfStatement | WhileStatement
+        // self.Statement --> ; | self.Block | self.Assignment | IfStatement | WhileStatement
         Statement statement = null;
         if (token.type().equals(TokenType.Semicolon))
             statement = new Skip();
@@ -105,7 +107,7 @@ public class Parser {
     }
 
     private Block statements() {
-        // Block --> '{' Statements '}'
+        // self.Block --> '{' Statements '}'
         Block block = new Block();
         match(TokenType.LeftBrace);
         while (isStatement()) {
@@ -116,7 +118,7 @@ public class Parser {
     }
 
     private Assignment assignment() {
-        // Assignment --> Identifier = Expression ;
+        // self.Assignment --> Identifier = self.Expression ;
         Variable target = new Variable(match(TokenType.Identifier));
         match(TokenType.Assign);
         Expression source = expression();
@@ -125,7 +127,7 @@ public class Parser {
     }
 
     private Conditional ifStatement() {
-        // IfStatement --> if ( Expression ) Statement [ else Statement ]
+        // IfStatement --> if ( self.Expression ) self.Statement [ else self.Statement ]
         Conditional conditional;
         match(TokenType.If);
         match(TokenType.LeftParen);
@@ -141,7 +143,7 @@ public class Parser {
     }
 
     private Loop whileStatement() {
-        // WhileStatement --> while ( Expression ) Statement
+        // WhileStatement --> while ( self.Expression ) self.Statement
         match(TokenType.While);
         match(TokenType.LeftParen);
         Expression test = expression();
@@ -151,7 +153,7 @@ public class Parser {
     }
 
     private Expression expression() {
-        // Expression --> Conjunction { || Conjunction }
+        // self.Expression --> Conjunction { || Conjunction }
         Expression expression = conjunction();
         while (token.type().equals(TokenType.Or)) {
             Operator operator = new Operator(match(token.type()));
@@ -227,8 +229,8 @@ public class Parser {
     }
 
     private Expression primary() {
-        // Primary --> Identifier | Literal | ( Expression )
-        // | Type ( Expression )
+        // Primary --> Identifier | Literal | ( self.Expression )
+        // | self.Type ( self.Expression )
         Expression expression = null;
         if (token.type().equals(TokenType.Identifier)) {
             expression = new Variable(match(TokenType.Identifier));
@@ -245,7 +247,7 @@ public class Parser {
             match(TokenType.RightParen);
             expression = new Unary(operator, term);
         } else
-            error("Identifier | Literal | ( | Type");
+            error("Identifier | Literal | ( | self.Type");
         return expression;
     }
 
@@ -332,4 +334,4 @@ public class Parser {
         prog.display(0); // display abstract syntax tree
     } // main
 
-} // Parser
+} // self.Parser

@@ -1,11 +1,11 @@
-
+package self;
 /// Abstract syntax for the language C++Lite,
 // exactly as it appears in Appendix B.
 // add a display method to each class
 import java.util.*;
 
 class Program {
-    // Program = Declarations decpart ; Block body
+    // self.Program = self.Declarations decpart ; self.Block body
     Declarations decpart;
     Block body;
 
@@ -24,23 +24,23 @@ class Program {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.println("Program : ");
+        System.out.println("self.Program : ");
         decpart.display(++k);
         body.display(k);
     }
 }
 
 class Declarations extends ArrayList<Declaration> {
-    // Declarations = Declaration*
+    // self.Declarations = self.Declaration*
     // (a list of declarations d1, d2, ..., dn)
 
     public void display(int k) {
         for (int w = 0; w < k; ++w)
             System.out.print("\t");
-        System.out.println("Declarations: ");
+        System.out.println("self.Declarations: ");
         for (int w = 0; w < k; ++w)
             System.out.print("\t");
-        System.out.print("\tDeclaration = ");
+        System.out.print("\tself.Declaration = ");
         for (int i = 0; i < size(); i++)
             get(i).display();
         System.out.println("");
@@ -48,7 +48,7 @@ class Declarations extends ArrayList<Declaration> {
 }
 
 class Declaration {
-    // Declaration = Variable v; Type t
+    // self.Declaration = self.Variable v; self.Type t
     Variable v;
     Type t;
 
@@ -64,12 +64,12 @@ class Declaration {
 }
 
 class Type {
-    // Type = int | bool | char | float
+    // self.Type = int | bool | char | float
     final static Type INT = new Type("int");
     final static Type BOOL = new Type("bool");
     final static Type CHAR = new Type("char");
     final static Type FLOAT = new Type("float");
-    // final static Type UNDEFINED = new Type("undef");
+    // final static self.Type UNDEFINED = new self.Type("undef");
 
     private String id;
 
@@ -83,7 +83,7 @@ class Type {
 }
 
 abstract class Statement {
-    // Statement = Skip | Block | Assignment | Conditional | Loop
+    // self.Statement = self.Skip | self.Block | self.Assignment | self.Conditional | self.Loop
 
     public void display(int k) {
     }
@@ -93,7 +93,7 @@ class Skip extends Statement {
 }
 
 class Block extends Statement {
-    // Block = Statement*
+    // self.Block = self.Statement*
     // (a Vector of members)
     public ArrayList<Statement> members = new ArrayList<Statement>();
 
@@ -101,7 +101,7 @@ class Block extends Statement {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.println("Block : ");
+        System.out.println("self.Block : ");
         // array display look up list array in the API
         for (int i = 0; i < members.size(); i++)
             members.get(i).display(k + 1);
@@ -110,7 +110,7 @@ class Block extends Statement {
 }
 
 class Assignment extends Statement {
-    // Assignment = Variable target; Expression source
+    // self.Assignment = self.Variable target; self.Expression source
     Variable target;
     Expression source;
 
@@ -131,7 +131,7 @@ class Assignment extends Statement {
 }
 
 class Conditional extends Statement {
-    // Conditional = Expression test; Statement thenbranch, elsebranch
+    // self.Conditional = self.Expression test; self.Statement thenbranch, elsebranch
 
     Expression test;
     Statement thenbranch, elsebranch;
@@ -155,7 +155,7 @@ class Conditional extends Statement {
         {
             System.out.print("\t");
         }
-        System.out.println("Conditional : ");
+        System.out.println("self.Conditional : ");
         test.display(++k);
         thenbranch.display(k);
         elsebranch.display(k);
@@ -163,7 +163,7 @@ class Conditional extends Statement {
 }
 
 class Loop extends Statement {
-    // Loop = Expression test; Statement body
+    // self.Loop = self.Expression test; self.Statement body
     Expression test;
     Statement body;
 
@@ -176,7 +176,7 @@ class Loop extends Statement {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.println("Loop : ");
+        System.out.println("self.Loop : ");
         test.display(++k);
         body.display(k);
     }
@@ -184,15 +184,15 @@ class Loop extends Statement {
 }
 
 abstract class Expression {
-    // Expression = Variable | Value | Binary | Unary
+    // self.Expression = self.Variable | self.Value | self.Binary | self.Unary
     public void display(int k) {
-        // System.out.println("Display Expression Object");
+        // System.out.println("Display self.Expression Object");
     }
 
 }
 
 class Variable extends Expression {
-    // Variable = String id
+    // self.Variable = String id
     private String id;
 
     Variable(String s) {
@@ -216,13 +216,13 @@ class Variable extends Expression {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.println("Variable " + id);
+        System.out.println("self.Variable " + id);
     }
 }
 
 abstract class Value extends Expression {
-    // Value = IntValue | BoolValue |
-    // CharValue | FloatValue
+    // self.Value = self.IntValue | self.BoolValue |
+    // self.CharValue | self.FloatValue
     protected Type type;
     protected boolean undef = true;
 
@@ -267,7 +267,7 @@ abstract class Value extends Expression {
     }
     /*
      * public void display() {
-     * System.out.println("Display Value Object");
+     * System.out.println("Display self.Value Object");
      * }
      */
 }
@@ -339,7 +339,7 @@ class BoolValue extends Value {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.print("BoolValue: ");
+        System.out.print("self.BoolValue: ");
         System.out.println(value);
     }
 
@@ -373,7 +373,7 @@ class CharValue extends Value {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.print("CharValue: ");
+        System.out.print("self.CharValue: ");
         System.out.println(value);
     }
 
@@ -407,14 +407,14 @@ class FloatValue extends Value {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.print("FloatValue: ");
+        System.out.print("self.FloatValue: ");
         System.out.println(value);
     }
 
 }
 
 class Binary extends Expression {
-    // Binary = Operator op; Expression term1, term2
+    // self.Binary = self.Operator op; self.Expression term1, term2
     Operator op;
     Expression term1, term2;
 
@@ -428,19 +428,19 @@ class Binary extends Expression {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.print("Binary: ");
+        System.out.print("self.Binary: ");
         op.display(++k);
         term1.display(k);
         term2.display(k);
     } // binary
 
     public String toString() {
-        return ("Binary: op=" + op + " term1=" + term1 + " term2=" + term2);
+        return ("self.Binary: op=" + op + " term1=" + term1 + " term2=" + term2);
     }
 }
 
 class Unary extends Expression {
-    // Unary = Operator op; Expression term
+    // self.Unary = self.Operator op; self.Expression term
     Operator op;
     Expression term;
 
@@ -453,14 +453,14 @@ class Unary extends Expression {
         for (int w = 0; w < k; ++w) {
             System.out.print("\t");
         }
-        System.out.print("Unary: ");
+        System.out.print("self.Unary: ");
         op.display(++k);
         term.display(k);
     }
 }
 
 class Operator {
-    // Operator = BooleanOp | RelationalOp | ArithmeticOp | UnaryOp
+    // self.Operator = BooleanOp | RelationalOp | ArithmeticOp | UnaryOp
     // BooleanOp = && | ||
     final static String AND = "&&";
     final static String OR = "||";
@@ -526,7 +526,7 @@ class Operator {
     final static String BOOL_NE = "BOOL!=";
     final static String BOOL_GT = "BOOL>";
     final static String BOOL_GE = "BOOL>=";
-    // Type specific cast
+    // self.Type specific cast
     final static String I2F = "I2F";
     final static String F2I = "F2I";
     final static String C2I = "C2I";
