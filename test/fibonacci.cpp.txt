@@ -9,6 +9,7 @@ int fibonacci (int n) {
     }
     return fib0;
 }
+
 int main () {
     int answer;
     answer = fibonacci(8);
