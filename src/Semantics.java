@@ -169,7 +169,7 @@ public class Semantics {
         System.out.println("\nBegin type checking");
         System.out.println("Type map : ");
         TypeMap map = StaticTypeCheck.typing(program.globals);
-        map.display(0);
+        map.display();
         StaticTypeCheck.V(program, map);
         Program out = TypeTransformer.T(program, map);
         System.out.println("Output AST");
@@ -177,6 +177,6 @@ public class Semantics {
         Semantics semantics = new Semantics();
         State state = semantics.M(out);
         System.out.println("Final State");
-        state.display(0);
+        state.display();
     }
 }

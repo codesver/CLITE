@@ -10,25 +10,20 @@ class Program {
         this.functions = functions;
     }
 
-    public void display() {
-        int level = 0;
-        Indenter indent = new Indenter(level);
-        indent.display("Program : ");
-        level = level + 1;
-        indent = new Indenter(level);
-        indent.display("Globals : ");
-        globals.display(level + 1);
-        functions.display(level);
-        System.out.println();
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Program : ");
+        globals.display(++k);
+        functions.display(k);
     }
 }
 
 class Functions extends ArrayList<Function> {
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display("Functions : ");
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Functions : ");
         for (Function function : this) {
-            function.display(level + 1);
+            function.display(k + 1);
             System.out.println();
         }
     }
@@ -48,16 +43,17 @@ class Function {
         this.body = body;
     }
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display("Function = " + id + "; Return type = " + type.getId());
-        level = level + 1;
-        indent = new Indenter(level);
-        indent.display("Parameters : ");
-        params.display(level + 1);
-        indent.display("Locals : ");
-        locals.display(level + 1);
-        body.display(level);
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Function = " + id + "; Return type = " + type.getId());
+        k++;
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Parameters : ");
+        params.display(k + 1);
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Locals : ");
+        locals.display(k + 1);
+        body.display(k);
     }
 }
 
@@ -65,17 +61,13 @@ class Function {
 class Declarations extends ArrayList<Declaration> {
     // Declarations = Declaration*
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display("Declarations : ");
-        indent.display(" <");
-        String sep = "";
-        for (Declaration dcl : this) {
-            System.out.print(sep);
-            dcl.display();
-            sep = ", ";
-        }
-        System.out.print(">");
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Declarations: ");
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.print("\tDeclaration = ");
+        for (int i = 0; i < size(); i++) get(i).display();
+        System.out.println("");
     }
 }
 
@@ -131,15 +123,15 @@ class Type {
 
 abstract class Statement {
     // Statement = Skip | Block | Assignment | Conditional | Loop | Return | Call
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display(getClass().toString().substring(6) + " : ");
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println(getClass().toString().substring(6) + " : ");
     }
 }
 
 class Skip extends Statement {
-    public void display(int level) {
-        super.display(level);
+    public void display(int k) {
+        super.display(k);
     }
 }
 
@@ -147,10 +139,10 @@ class Block extends Statement {
     // Block = Statement*
     public ArrayList<Statement> statements = new ArrayList<Statement>();
 
-    public void display(int level) {
-        super.display(level);
+    public void display(int k) {
+        super.display(k);
         for (Statement statement : statements)
-            statement.display(level + 1);
+            statement.display(k + 1);
     }
 }
 
@@ -164,10 +156,10 @@ class Assignment extends Statement {
         this.source = source;
     }
 
-    public void display(int level) {
-        super.display(level);
-        target.display(level + 1);
-        source.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        target.display(k + 1);
+        source.display(k + 1);
     }
 }
 
@@ -188,12 +180,12 @@ class Conditional extends Statement {
         this.elseBranch = elseBranch;
     }
 
-    public void display(int level) {
-        super.display(level);
-        test.display(level + 1);
-        thenBranch.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        test.display(k + 1);
+        thenBranch.display(k + 1);
         assert elseBranch != null : "else branch cannot be null";
-        elseBranch.display(level + 1);
+        elseBranch.display(k + 1);
     }
 }
 
@@ -207,10 +199,10 @@ class Loop extends Statement {
         this.body = body;
     }
 
-    public void display(int level) {
-        super.display(level);
-        test.display(level + 1);
-        body.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        test.display(k + 1);
+        body.display(k + 1);
     }
 }
 
@@ -223,10 +215,10 @@ class Return extends Statement {
         this.retVal = retVal;
     }
 
-    public void display(int level) {
-        super.display(level);
-        target.display(level + 1);
-        retVal.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        target.display(k + 1);
+        retVal.display(k + 1);
     }
 }
 
@@ -239,29 +231,28 @@ class CallStatement extends Statement {
         this.args = args;
     }
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display(getClass().toString().substring(6) + ": " + id);
-        args.display(level + 1);
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println(getClass().toString().substring(6) + ": " + id);
+        args.display(k + 1);
     }
 }
 
 class Expressions extends ArrayList<Expression> {
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display("Arguments : ");
-        for (Expression exp : this) {
-            exp.display(level + 1);
-        }
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println("Arguments : ");
+        for (Expression exp : this)
+            exp.display(k + 1);
     }
 }
 
 abstract class Expression {
     // Expression = VariableRef | Value | Binary | Unary | Call
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display(getClass().toString().substring(6) + " : ");
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.print(getClass().toString().substring(6) + " : ");
     }
 }
 
@@ -273,8 +264,8 @@ abstract class VariableRef extends Expression {
         return id;
     }
 
-    public void display(int level) {
-        super.display(level);
+    public void display(int k) {
+        super.display(k);
     }
 }
 
@@ -298,9 +289,9 @@ class Variable extends VariableRef {
         return id.hashCode();
     }
 
-    public void display(int level) {
-        super.display(level);
-        System.out.print(id);
+    public void display(int k) {
+        super.display(k);
+        System.out.println(id);
     }
 }
 
@@ -370,9 +361,9 @@ class IntValue extends Value {
         return "" + value;
     }
 
-    public void display(int level) {
-        super.display(level);
-        System.out.print(value);
+    public void display(int k) {
+        super.display(k);
+        System.out.println(value);
     }
 }
 
@@ -404,9 +395,9 @@ class BoolValue extends Value {
         return "" + value;
     }
 
-    public void display(int level) {
-        super.display(level);
-        System.out.print(value);
+    public void display(int k) {
+        super.display(k);
+        System.out.println(value);
     }
 }
 
@@ -433,9 +424,9 @@ class CharValue extends Value {
         return "" + value;
     }
 
-    public void display(int level) {
-        super.display(level);
-        System.out.print(value);
+    public void display(int k) {
+        super.display(k);
+        System.out.println(value);
     }
 }
 
@@ -462,9 +453,9 @@ class FloatValue extends Value {
         return "" + value;
     }
 
-    public void display(int level) {
-        super.display(level);
-        System.out.print(value);
+    public void display(int k) {
+        super.display(k);
+        System.out.println(value);
     }
 }
 
@@ -479,11 +470,11 @@ class Binary extends Expression {
         this.term2 = term2;
     }
 
-    public void display(int level) {
-        super.display(level);
-        op.display(level + 1);
-        term1.display(level + 1);
-        term2.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        op.display(k + 1);
+        term1.display(k + 1);
+        term2.display(k + 1);
     }
 }
 
@@ -497,10 +488,10 @@ class Unary extends Expression {
         this.term = term;
     }
 
-    public void display(int level) {
-        super.display(level);
-        op.display(level + 1);
-        term.display(level + 1);
+    public void display(int k) {
+        super.display(k);
+        op.display(k + 1);
+        term.display(k + 1);
     }
 }
 
@@ -513,10 +504,10 @@ class CallExpression extends Expression {
         this.args = args;
     }
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display(getClass().toString().substring(6) + ": " + id);
-        args.display(level + 1);
+    public void display(int k) {
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println(getClass().toString().substring(6) + ": " + id);
+        args.display(k + 1);
     }
 }
 
@@ -732,8 +723,9 @@ class Operator {
         return map(boolMap, op);
     }
 
-    public void display(int level) {
-        Indenter indent = new Indenter(level);
-        indent.display(getClass().toString().substring(6) + ": " + val);
+    public void display(int k) {
+        System.out.println();
+        for (int w = 0; w < k; ++w) System.out.print("\t");
+        System.out.println(getClass().toString().substring(6) + ": " + val);
     }
 }

@@ -52,7 +52,6 @@ public class StaticTypeCheck {
         Declarations ds = new Declarations();
         ds.addAll(p.globals);
         for (int i = 0; i < p.functions.size(); i++) {
-
             Variable fl = new Variable(p.functions.get(i).id);
             ds.add(new VariableDeclare(fl, p.functions.get(i).type));
             functionMap.put(fl, p.functions.get(i).type);
@@ -277,7 +276,7 @@ public class StaticTypeCheck {
     public static void main(String args[]) {
         Parser parser = new Parser(new Lexer(args[0]));
         Program program = parser.program();
-        program.display();
+        program.display(0);
         System.out.println("\nBegin type checking...");
         System.out.println("Type map : ");
         TypeMap map = typing(program.globals);
