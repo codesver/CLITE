@@ -1,5 +1,3 @@
-package git;
-
 import java.util.*;
 
 // Following is the semantics class:
@@ -23,12 +21,12 @@ public class Semantics {
         State state = new State();
         for (Declaration decl : d)
 //            state.put(decl.v, Value.mkValue(decl.t));
-            if (decl instanceof VariableDecl) {
-                VariableDecl vd = (VariableDecl) decl;
+            if (decl instanceof VariableDeclare) {
+                VariableDeclare vd = (VariableDeclare) decl;
 //                state.put(vd.v, Value.mkValue(vd.t));
                 ArrayList<Value> val = new ArrayList<Value>();
-                val.add(Value.mkValue(vd.t));
-                state.put(vd.v, val);
+                val.add(Value.mkValue(vd.type));
+                state.put(vd.variable, val);
             }
 
         return state;
@@ -61,7 +59,7 @@ public class Semantics {
 
     State M (Block b, State state) {
         //Block = Statement*
-        for (Statement s : b.members)
+        for (Statement s : b.statements)
             state = M (s, state);
         return state;
     }
@@ -69,9 +67,9 @@ public class Semantics {
     State M (Conditional c, State state) {
         //Conditional = Expression test; Statement thenbranch, elsebranch
         if (M(c.test, state).boolValue( ))
-            return M (c.thenbranch, state);
+            return M (c.thenBranch, state);
         else
-            return M (c.elsebranch, state);
+            return M (c.elseBranch, state);
     }
 
     State M (Loop l, State state) {

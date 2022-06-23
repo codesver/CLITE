@@ -1,5 +1,3 @@
-package git;
-
 import java.util.*;
 
 public class State extends HashMap<VariableRef, ArrayList<Value>> {

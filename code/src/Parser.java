@@ -1,7 +1,3 @@
-package git;
-
-import java.util.*;
-
 public class Parser {
 
     Token token;          // current token from the input stream
@@ -70,7 +66,7 @@ public class Parser {
             match(TokenType.RightBracket);
         }
         else
-            ds.add(new VariableDecl(v, t));
+            ds.add(new VariableDeclare(v, t));
         while (token.type().equals(TokenType.Comma)) {
             match(TokenType.Comma);
             v = new Variable(match(TokenType.Identifier));
@@ -80,7 +76,7 @@ public class Parser {
                 match(TokenType.RightBracket);
             }
             else
-                ds.add(new VariableDecl(v, t));
+                ds.add(new VariableDeclare(v, t));
         }
         match(TokenType.Semicolon);
     }
@@ -121,7 +117,7 @@ public class Parser {
     private void param(Declarations ds) {
         Type t = type();
         Variable v = new Variable(match(TokenType.Identifier));
-        ds.add(new VariableDecl(v, t));
+        ds.add(new VariableDeclare(v, t));
         while (token.type().equals(TokenType.Comma)) {
             match(TokenType.Comma);
             t = type();
@@ -132,7 +128,7 @@ public class Parser {
                 match(TokenType.RightBracket);
             }
             else
-                ds.add(new VariableDecl(v, t));
+                ds.add(new VariableDeclare(v, t));
         }
     }
 
@@ -156,7 +152,7 @@ public class Parser {
             match(TokenType.RightBracket);
         }
         else
-            ds.add(new VariableDecl(v, t));
+            ds.add(new VariableDeclare(v, t));
         while (token.type().equals(TokenType.Comma)) {
             match(TokenType.Comma);
             v = new Variable(match(TokenType.Identifier));
@@ -166,7 +162,7 @@ public class Parser {
                 match(TokenType.RightBracket);
             }
             else
-                ds.add(new VariableDecl(v, t));
+                ds.add(new VariableDeclare(v, t));
         }
         match(TokenType.Semicolon);
     }
@@ -216,7 +212,7 @@ public class Parser {
         return s;
     }
 
-    private StatementCall callStatement(String s){
+    private CallStatement callStatement(String s){
         match(TokenType.LeftParen);
         Expressions args = new Expressions();
         while(!(token.type().equals(TokenType.RightParen))){
@@ -226,7 +222,7 @@ public class Parser {
         }
         match(TokenType.RightParen);
         match(TokenType.Semicolon);
-        return new StatementCall(s,args);
+        return new CallStatement(s,args);
 
     }
 
@@ -241,7 +237,7 @@ public class Parser {
         // Block --> '{' Statements '}'
         Block b = new Block();
         while (! token.type().equals(TokenType.RightBrace)) {
-            b.members.add(statement());
+            b.statements.add(statement());
         }
         return b;
     }
@@ -384,7 +380,7 @@ public class Parser {
                         match(TokenType.Comma);
                 }
                 match(TokenType.RightParen);
-                e = new ExpressionCall(s,args);
+                e = new CallExpression(s,args);
             }else {
                 e = new Variable(s);
             }

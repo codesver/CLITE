@@ -1,5 +1,3 @@
-package git;
-
 public enum TokenType {
     Bool, Char, Else, False, Float,
     If, Int, Main, True, While, Void, Return,

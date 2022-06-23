@@ -1,7 +1,3 @@
-package git;
-
-import java.util.*;
-
 /**
  * 타입변환을 위한 클래스
  */
@@ -18,7 +14,7 @@ public class TypeTransformer {
         ds.addAll(p.globals);
         for (int i=0; i<p.functions.size(); i++) {
             Variable fl = new Variable(p.functions.get(i).id);
-            ds.add(new VariableDecl(fl, p.functions.get(i).type));
+            ds.add(new VariableDeclare(fl, p.functions.get(i).type));
             functionMap.put(fl, p.functions.get(i).type);
         }
         T(ds);
@@ -74,8 +70,8 @@ public class TypeTransformer {
             for (int j=i+1; j<d.size(); j++) {
                 Declaration di = d.get(i);
                 Declaration dj = d.get(j);
-                StaticTypeCheck.check( ! (di.v.equals(dj.v)),
-                        "duplicate declaration: " + dj.v);
+                StaticTypeCheck.check( ! (di.variable.equals(dj.variable)),
+                        "duplicate declaration: " + dj.variable);
                 //System.out.println(di.v + " = " + dj.v);
             }
     }
@@ -85,20 +81,20 @@ public class TypeTransformer {
             return e;
         if (e instanceof VariableRef)
             return e;
-        if (e instanceof ExpressionCall){
-            ExpressionCall c = (ExpressionCall)e;
+        if (e instanceof CallExpression){
+            CallExpression c = (CallExpression)e;
             StaticTypeCheck.check(!(functionMap.get(new Variable(c.id))).equals(Type.VOID),
                     "Expression Calls must have a return type.");
             for (Function func : dtFunction){
                 if (func.id.equals(c.id)){
-                    StaticTypeCheck.check (c.arg.size() == func.params.size(),
+                    StaticTypeCheck.check (c.args.size() == func.params.size(),
                             "Arguments and Parameters are different size.");
 
-                    for(int i = 0; i < c.arg.size(); i++){
-                        Type ti = ((Type)func.params.get(i).t);
-                        Type tj = StaticTypeCheck.typeOf(c.arg.get(i),tm, functionMap);
+                    for(int i = 0; i < c.args.size(); i++){
+                        Type ti = ((Type)func.params.get(i).type);
+                        Type tj = StaticTypeCheck.typeOf(c.args.get(i),tm, functionMap);
                         StaticTypeCheck.check(ti.equals(tj)
-                                , func.params.get(i).t + " is not equal to " + StaticTypeCheck.typeOf(c.arg.get(i),tm, functionMap));
+                                , func.params.get(i).type + " is not equal to " + StaticTypeCheck.typeOf(c.args.get(i),tm, functionMap));
                     }
                 }
                 return c;
@@ -177,8 +173,8 @@ public class TypeTransformer {
         if (s instanceof Conditional) {
             Conditional c = (Conditional)s;
             Expression test = T (c.test, tm);
-            Statement tbr = T (c.thenbranch, tm);
-            Statement ebr = T (c.elsebranch, tm);
+            Statement tbr = T (c.thenBranch, tm);
+            Statement ebr = T (c.elseBranch, tm);
             return new Conditional(test,  tbr, ebr);
         }
         if (s instanceof Loop) {
@@ -190,8 +186,8 @@ public class TypeTransformer {
         if (s instanceof Block) {
             Block b = (Block)s;
             Block out = new Block();
-            for (Statement stmt : b.members)
-                out.members.add(T(stmt, tm));
+            for (Statement stmt : b.statements)
+                out.statements.add(T(stmt, tm));
             return out;
         }
         if (s instanceof Return)
@@ -201,25 +197,25 @@ public class TypeTransformer {
                     "Return is not a valid Statement in a Void Function");
             Return r = (Return)s;
             //타입규칙 10.4
-            Return q = new Return(r.target,T(r.returned,tm));
-            StaticTypeCheck.check(returnType.equals(StaticTypeCheck.typeOf(q.returned,tm, functionMap)),
+            Return q = new Return(r.target,T(r.retVal,tm));
+            StaticTypeCheck.check(returnType.equals(StaticTypeCheck.typeOf(q.retVal,tm, functionMap)),
                     "The returned type does not match the fuction type;");
             returnFound = true;
             return q;
         }
-        if (s instanceof StatementCall){
-            StatementCall c = (StatementCall)s;
+        if (s instanceof CallStatement){
+            CallStatement c = (CallStatement)s;
             StaticTypeCheck.check((functionMap.get(new Variable(c.id))).equals(Type.VOID),
                     "Statement Calls can only be to Void statements");
             for (Function func : dtFunction){
                 if (func.id.equals(c.id)){
-                    StaticTypeCheck.check (c.arg.size() == func.params.size(),
+                    StaticTypeCheck.check (c.args.size() == func.params.size(),
                             "Arguments and Parameters are different size.");
-                    for(int i = 0; i < c.arg.size(); i++){
-                        Type ti =((Type)func.params.get(i).t);
-                        Type tj = StaticTypeCheck.typeOf(c.arg.get(i),tm, functionMap);
+                    for(int i = 0; i < c.args.size(); i++){
+                        Type ti =((Type)func.params.get(i).type);
+                        Type tj = StaticTypeCheck.typeOf(c.args.get(i),tm, functionMap);
                         StaticTypeCheck.check(ti.equals(tj)
-                                , func.params.get(i).t + " is not equal to " + StaticTypeCheck.typeOf(c.arg.get(i),tm, functionMap));
+                                , func.params.get(i).type + " is not equal to " + StaticTypeCheck.typeOf(c.args.get(i),tm, functionMap));
                     }
                 }
             }

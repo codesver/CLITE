@@ -1,5 +1,3 @@
-package git;
-
 import java.util.*;
 
 public class TypeMap extends HashMap<VariableRef, Type> {
@@ -30,7 +28,7 @@ public class TypeMap extends HashMap<VariableRef, Type> {
                     Function func = f.get(funcloc);
                     if (func.params != null) {
                         for (int a = 0; a < func.params.size(); a++) {
-                            System.out.print(sep2 + "<" + func.params.get(a).v + ", " + func.params.get(a).t.id + ">");
+                            System.out.print(sep2 + "<" + func.params.get(a).variable + ", " + func.params.get(a).type.id + ">");
                             sep2 = ", ";
                         }
                     }

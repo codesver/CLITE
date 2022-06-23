@@ -1,5 +1,3 @@
-package git;
-
 public class Token {
 
     private static final int KEYWORDS = TokenType.Eof.ordinal();

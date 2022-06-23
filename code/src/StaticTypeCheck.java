@@ -1,8 +1,4 @@
-package git;
-
 // StaticTypeCheck.java
-
-import java.util.*;
 
 // Static type checking for Clite is defined by the functions
 // V and the auxiliary functions typing and typeOf.  These
@@ -19,9 +15,9 @@ public class StaticTypeCheck {
     public static TypeMap typing (Declarations d) {
         TypeMap map = new TypeMap();
         for (Declaration di : d)
-            if (di instanceof VariableDecl) {
-                VariableDecl vd = (VariableDecl) di;
-                map.put(vd.v, vd.t);
+            if (di instanceof VariableDeclare) {
+                VariableDeclare vd = (VariableDeclare) di;
+                map.put(vd.variable, vd.type);
             }
 
         return map;
@@ -38,8 +34,8 @@ public class StaticTypeCheck {
             for (int j=i+1; j<d.size(); j++) {
                 Declaration di = d.get(i);
                 Declaration dj = d.get(j);
-                check( ! (di.v.equals(dj.v)),
-                        "duplicate declaration: " + dj.v);
+                check( ! (di.variable.equals(dj.variable)),
+                        "duplicate declaration: " + dj.variable);
             }
     }
 
@@ -61,7 +57,7 @@ public class StaticTypeCheck {
         for (int i=0; i<p.functions.size(); i++) {
 
             Variable fl = new Variable(p.functions.get(i).id);
-            ds.add(new VariableDecl(fl, p.functions.get(i).type));
+            ds.add(new VariableDeclare(fl, p.functions.get(i).type));
             functionMap.put(fl, p.functions.get(i).type);
         }
         V(ds);
@@ -128,8 +124,8 @@ public class StaticTypeCheck {
             V (c.test, tm);
             check( typeOf(c.test, tm, functionMap)== Type.BOOL ,
                     "non-bool test in conditional");
-            V (c.thenbranch, tm);
-            V (c.elsebranch, tm);
+            V (c.thenBranch, tm);
+            V (c.elseBranch, tm);
             return;
         }
         if (s instanceof Loop) {
@@ -142,8 +138,8 @@ public class StaticTypeCheck {
         }
         if (s instanceof Block) {
             Block b = (Block)s;
-            for (int j=0; j < b.members.size(); j++)
-                V((Statement)(b.members.get(j)), tm);
+            for (int j = 0; j < b.statements.size(); j++)
+                V((Statement)(b.statements.get(j)), tm);
             return;
         }
         if (s instanceof Return)
@@ -153,24 +149,24 @@ public class StaticTypeCheck {
                     "Return is not a valid Statement in a Void Function");
             Return r = (Return)s;
             //타입 규칙 10.4
-            check(returnType.equals(typeOf(r.returned,tm, functionMap)),
+            check(returnType.equals(typeOf(r.retVal,tm, functionMap)),
                     "The returned type does not match the fuction type;");
             returnFound = true;
             return;
         }
-        if (s instanceof StatementCall) {
-            StatementCall c = (StatementCall)s;
+        if (s instanceof CallStatement) {
+            CallStatement c = (CallStatement)s;
             check((functionMap.get(new Variable(c.id))).equals(Type.VOID),
                     "Statement Calls can only be to Void statements");
             for (Function func : dtFunction){
                 if (func.id.equals(c.id)){
-                    check (c.arg.size() == func.params.size(),
+                    check (c.args.size() == func.params.size(),
                             "Arguments and Parameters are different size.");
-                    for(int i = 0; i < c.arg.size(); i++){
-                        Type ti =((Type)func.params.get(i).t);
-                        Type tj = typeOf(c.arg.get(i),tm, functionMap);
+                    for(int i = 0; i < c.args.size(); i++){
+                        Type ti =((Type)func.params.get(i).type);
+                        Type tj = typeOf(c.args.get(i),tm, functionMap);
                         check(ti.equals(tj)
-                                , func.params.get(i).t + " is not equal to " + typeOf(c.arg.get(i),tm, functionMap));
+                                , func.params.get(i).type + " is not equal to " + typeOf(c.args.get(i),tm, functionMap));
                     }
                 }
             }
@@ -187,19 +183,19 @@ public class StaticTypeCheck {
             check( tm.containsKey(v), "undeclared variable: " + v);
             return;
         }
-        if (e instanceof ExpressionCall){
-            ExpressionCall c = (ExpressionCall)e;
+        if (e instanceof CallExpression){
+            CallExpression c = (CallExpression)e;
             check(!(functionMap.get(new Variable(c.id))).equals(Type.VOID),
                     "Expression Calls must have a return type.");
             for (Function func : dtFunction){
                 if (func.id.equals(c.id)){
-                    check (c.arg.size() == func.params.size(),
+                    check (c.args.size() == func.params.size(),
                             "Arguments and Parameters are different size.");
-                    for(int i = 0; i < c.arg.size(); i++){
-                        Type ti =((Type)func.params.get(i).t);
-                        Type tj = typeOf(c.arg.get(i),tm, functionMap);
+                    for(int i = 0; i < c.args.size(); i++){
+                        Type ti =((Type)func.params.get(i).type);
+                        Type tj = typeOf(c.args.get(i),tm, functionMap);
                         check(ti.equals(tj)
-                                , func.params.get(i).t + " is not equal to " + typeOf(c.arg.get(i),tm, functionMap));
+                                , func.params.get(i).type + " is not equal to " + typeOf(c.args.get(i),tm, functionMap));
                     }
                 }
             }
@@ -258,8 +254,8 @@ public class StaticTypeCheck {
             check (tm.containsKey(v), "undefined variable: " + v);
             return (Type) tm.get(v);
         }
-        if (e instanceof ExpressionCall){
-            ExpressionCall c = (ExpressionCall)e;
+        if (e instanceof CallExpression){
+            CallExpression c = (CallExpression)e;
             if (functionMap.isEmpty()){
                 functionMap = new TypeMap();
                 functionMap.putAll(fm);

@@ -1,5 +1,3 @@
-package git;
-
 import java.io.*;
 
 public class Lexer {
@@ -7,12 +5,11 @@ public class Lexer {
     private char ch = ' ';
     private BufferedReader input;
     private String line = "";
-    private int lineno = 0;
+    private int lineNo = 0;
     private int col = 1;
-    private final String letters = "abcdefghijklmnopqrstuvwxyz"
-            + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final String letters = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final String digits = "0123456789";
-    private final char eolnCh = '\n';
+    private final char eoLnCh = '\n';
     private final char eofCh = '\004';
 
 
@@ -41,8 +38,8 @@ public class Lexer {
                 line = "" + eofCh;
             else {
                 // System.out.println(lineno + ":\t" + line);
-                lineno++;
-                line += eolnCh;
+                lineNo++;
+                line += eoLnCh;
             } // if line
             col = 0;
         } // if col
@@ -62,7 +59,7 @@ public class Lexer {
                 number += concat(digits);
                 return Token.mkFloatLiteral(number);
             } else switch (ch) {
-                case ' ': case '\t': case '\r': case eolnCh:
+                case ' ': case '\t': case '\r': case eoLnCh:
                     ch = nextChar();
                     break;
 
@@ -72,7 +69,7 @@ public class Lexer {
                     // comment
                     do {
                         ch = nextChar();
-                    } while (ch != eolnCh);
+                    } while (ch != eoLnCh);
                     ch = nextChar();
                     break;
 
