@@ -1,3 +1,5 @@
+
+
 import java.io.*;
 
 public class Lexer {
@@ -13,11 +15,10 @@ public class Lexer {
     private final char eofCh = '\004';
 
 
-    public Lexer (String fileName) { // source filename
+    public Lexer(String fileName) { // source filename
         try {
-            input = new BufferedReader (new FileReader(fileName));
-        }
-        catch (FileNotFoundException e) {
+            input = new BufferedReader(new FileReader(fileName));
+        } catch (FileNotFoundException e) {
             System.out.println("File not found: " + fileName);
             System.exit(1);
         }
@@ -29,7 +30,7 @@ public class Lexer {
         col++;
         if (col >= line.length()) {
             try {
-                line = input.readLine( );
+                line = input.readLine();
             } catch (IOException e) {
                 System.err.println(e);
                 System.exit(1);
@@ -37,7 +38,6 @@ public class Lexer {
             if (line == null) // at end of file
                 line = "" + eofCh;
             else {
-                // System.out.println(lineno + ":\t" + line);
                 lineNo++;
                 line += eoLnCh;
             } // if line
@@ -47,7 +47,7 @@ public class Lexer {
     }
 
 
-    public Token next( ) { // Return next token
+    public Token next() { // Return next token
         do {
             if (isLetter(ch)) { // ident or keyword
                 String spelling = concat(letters + digits);
@@ -59,13 +59,16 @@ public class Lexer {
                 number += concat(digits);
                 return Token.mkFloatLiteral(number);
             } else switch (ch) {
-                case ' ': case '\t': case '\r': case eoLnCh:
+                case ' ':
+                case '\t':
+                case '\r':
+                case eoLnCh:
                     ch = nextChar();
                     break;
 
                 case '/':  // divide or comment
                     ch = nextChar();
-                    if (ch != '/')  return Token.divideTok;
+                    if (ch != '/') return Token.divideTok;
                     // comment
                     do {
                         ch = nextChar();
@@ -79,35 +82,52 @@ public class Lexer {
                     ch = nextChar();
                     return Token.mkCharLiteral("" + ch1);
 
-                case eofCh: return Token.eofTok;
+                case eofCh:
+                    return Token.eofTok;
 
-                case '+': ch = nextChar();
+                case '+':
+                    ch = nextChar();
                     return Token.plusTok;
-                case '-': ch = nextChar();
+                case '-':
+                    ch = nextChar();
                     return Token.minusTok;
-                case '*': ch = nextChar();
+                case '*':
+                    ch = nextChar();
                     return Token.multiplyTok;
-                case '%': ch = nextChar();
+                case '%':
+                    ch = nextChar();
                     return Token.modulusTok;
-                case '(': ch = nextChar();
+                case '(':
+                    ch = nextChar();
                     return Token.leftParenTok;
-                case ')': ch = nextChar();
+                case ')':
+                    ch = nextChar();
                     return Token.rightParenTok;
-                case '{': ch = nextChar();
+                case '{':
+                    ch = nextChar();
                     return Token.leftBraceTok;
-                case '}': ch = nextChar();
+                case '}':
+                    ch = nextChar();
                     return Token.rightBraceTok;
-                case '[': ch = nextChar();
+                case '[':
+                    ch = nextChar();
                     return Token.leftBracketTok;
-                case ']': ch = nextChar();
+                case ']':
+                    ch = nextChar();
                     return Token.rightBracketTok;
-                case ';': ch = nextChar();
+                case ';':
+                    ch = nextChar();
                     return Token.semicolonTok;
-                case ',': ch = nextChar();
+                case ',':
+                    ch = nextChar();
                     return Token.commaTok;
 
-                case '&': check('&'); return Token.andTok;
-                case '|': check('|'); return Token.orTok;
+                case '&':
+                    check('&');
+                    return Token.andTok;
+                case '|':
+                    check('|');
+                    return Token.orTok;
 
                 case '=':
                     return chkOpt('=', Token.assignTok,
@@ -122,18 +142,19 @@ public class Lexer {
                     return chkOpt('=', Token.notTok,
                             Token.noteqTok);
 
-                default: error("Illegal character " + ch);
+                default:
+                    error("Illegal character " + ch);
             } // switch
         } while (true);
     } // next
 
 
     private boolean isLetter(char c) {
-        return (c>='a' && c<='z' || c>='A' && c<='Z');
+        return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z');
     }
 
     private boolean isDigit(char c) {
-        return (c>='0' && c<='9');
+        return (c >= '0' && c <= '9');
     }
 
     private void check(char c) {
@@ -159,19 +180,18 @@ public class Lexer {
         return r;
     }
 
-    public void error (String msg) {
+    public void error(String msg) {
         System.err.print(line);
         System.err.println("Error: column " + col + " " + msg);
         System.exit(1);
     }
 
-    static public void main ( String[] argv ) {
+    static public void main(String[] argv) {
         Lexer lexer = new Lexer(argv[0]);
-        Token tok = lexer.next( );
+        Token tok = lexer.next();
         while (tok != Token.eofTok) {
             System.out.println(tok.toString());
-            tok = lexer.next( );
+            tok = lexer.next();
         }
     } // main
-
 }

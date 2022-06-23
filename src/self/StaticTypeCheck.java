@@ -9,7 +9,7 @@ public class StaticTypeCheck {
     public static TypeMap typing(Declarations d) {
         TypeMap map = new TypeMap();
         for (Declaration di : d)
-            map.put(di.v, di.t);
+            map.put(di.variable, di.type);
         return map;
     }
 
@@ -25,7 +25,7 @@ public class StaticTypeCheck {
             for (int j = i + 1; j < d.size(); j++) {
                 Declaration di = d.get(i);
                 Declaration dj = d.get(j);
-                check(!(di.v.equals(dj.v)), "duplicate declaration: " + dj.v);
+                check(!(di.variable.equals(dj.variable)), "duplicate declaration: " + dj.variable);
             }
     }
 
@@ -138,8 +138,8 @@ public class StaticTypeCheck {
             V(c.test, tm);
             Type testType = typeOf(c.test, tm);
             if (testType == Type.BOOL) {
-                V(c.thenbranch, tm);
-                V(c.elsebranch, tm);
+                V(c.thenBranch, tm);
+                V(c.elseBranch, tm);
                 return;
             } else
                 check(false, "poorly typed if in self.Conditional: " + c.test);

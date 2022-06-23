@@ -8,5 +8,3 @@ public enum TokenType {
     Divide, Modulus, And, Or, Identifier, IntLiteral,
     FloatLiteral, CharLiteral
 }
-
-// Void, Return 토큰타입 추가

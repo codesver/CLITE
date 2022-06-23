@@ -2,28 +2,27 @@ import java.util.*;
 
 public class TypeMap extends HashMap<VariableRef, Type> {
 
-    public void display () {
+    public void display() {
         System.out.print("{ ");
         String sep = "";
-        for (VariableRef key : keySet() ) {
+        for (VariableRef key : keySet()) {
             System.out.print(sep + "<" + key + ", " + get(key).getId() + ">");
             sep = ", ";
         }
         System.out.println(" }");
     }
 
-    public void display (Functions f, TypeMap fm) {
+    public void display(Functions f, TypeMap fm) {
         String sep = "  ";
         String sep2 = "";
-        for (VariableRef key : keySet() ) {
-
-            if (f != null){
+        for (VariableRef key : keySet()) {
+            if (f != null) {
                 int funcloc = -1;
-                for(int i  = 0; i < f.size(); i++){
-                    if (key.id.equals(f.get(i).id))funcloc = i;
+                for (int i = 0; i < f.size(); i++) {
+                    if (key.id.equals(f.get(i).id)) funcloc = i;
                 }
-                if (!(funcloc == -1)){
-                    System.out.print(sep + "<" + key +"(");
+                if (!(funcloc == -1)) {
+                    System.out.print(sep + "<" + key + "(");
 
                     Function func = f.get(funcloc);
                     if (func.params != null) {
@@ -34,7 +33,7 @@ public class TypeMap extends HashMap<VariableRef, Type> {
                     }
 
                     System.out.print("), " + get(key).getId() + ">");
-                }else{
+                } else {
                     System.out.print(sep + "<" + key + ", " + get(key).getId() + ">");
                 }
             } else {

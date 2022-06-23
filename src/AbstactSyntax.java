@@ -1,21 +1,5 @@
 import java.util.*;
 
-class Indenter {
-    public int level;
-
-    public Indenter(int next) {
-        level = next;
-    }
-
-    public void display(String message) {
-        String tab = "";
-        System.out.println();
-        for (int i = 0; i < level; i++)
-            tab = tab + "\t";
-        System.out.print(tab + message);
-    }
-}
-
 class Program {
     // Program = Declarations globals ; Functions functions
     Declarations globals;
@@ -265,7 +249,7 @@ class CallStatement extends Statement {
 class Expressions extends ArrayList<Expression> {
     public void display(int level) {
         Indenter indent = new Indenter(level);
-        indent.display("args = ");
+        indent.display("Arguments : ");
         for (Expression exp : this) {
             exp.display(level + 1);
         }
@@ -679,10 +663,22 @@ class Operator {
     boolean charOp() {
         return val.equals(CHAR) || val.equals(I2C);
     }
-    boolean I2FOp ( ) { return val.equals(I2F); }
-    boolean F2IOp ( ) { return val.equals(F2I); }
-    boolean C2IOp ( ) { return val.equals(C2I); }
-    boolean I2COp ( ) { return val.equals(I2C); }
+
+    boolean I2FOp() {
+        return val.equals(I2F);
+    }
+
+    boolean F2IOp() {
+        return val.equals(F2I);
+    }
+
+    boolean C2IOp() {
+        return val.equals(C2I);
+    }
+
+    boolean I2COp() {
+        return val.equals(I2C);
+    }
 
     final static String intMap[][] = {
             {PLUS, INT_PLUS}, {MINUS, INT_MINUS},

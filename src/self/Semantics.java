@@ -12,7 +12,7 @@ public class Semantics {
         State state = new State();
         // self.Value intUndef = new self.IntValue(); Not used
         for (Declaration decl : d)
-            state.put(decl.v, Value.mkValue(decl.t));
+            state.put(decl.variable, Value.mkValue(decl.type));
         return state;
     }
 
@@ -46,9 +46,9 @@ public class Semantics {
 
     State M(Conditional c, State state) {
         if (M(c.test, state).boolValue())
-            return M(c.thenbranch, state);
+            return M(c.thenBranch, state);
         else
-            return M(c.elsebranch, state);
+            return M(c.elseBranch, state);
     }
 
     State M(Loop l, State state) {

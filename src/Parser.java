@@ -9,7 +9,7 @@ public class Parser {
         token = lexer.next(); // retrieve its first Token
     }
 
-    private String match (TokenType t) {
+    private String match(TokenType t) {
         String value = token.value();
         if (token.type().equals(t))
             token = lexer.next();
@@ -35,19 +35,17 @@ public class Parser {
         Declarations globals = new Declarations();
         Functions functions = new Functions();
 
-        while(!(token.type().equals(TokenType.Eof))){
+        while (!(token.type().equals(TokenType.Eof))) {
             Type t = type();
             String id;
-            if (token.type().equals(TokenType.Main)){
+            if (token.type().equals(TokenType.Main)) {
                 id = match(TokenType.Main);
                 functions.add(mainFunction(t, id));
-            }
-            else{
+            } else {
                 id = match(TokenType.Identifier);
-                if (token.type().equals(TokenType.LeftParen)){
-                    functions.add(function(t,id));
-                }
-                else{
+                if (token.type().equals(TokenType.LeftParen)) {
+                    functions.add(function(t, id));
+                } else {
                     globalDecs(globals, t, id);
                 }
             }
@@ -56,16 +54,14 @@ public class Parser {
         return new Program(globals, functions);
     }
 
-    public void globalDecs(Declarations ds, Type type, String id){
+    public void globalDecs(Declarations ds, Type type, String id) {
         Type t = type;
         Variable v = new Variable(id);
-        if (token.type().equals(TokenType.LeftBracket))
-        {
+        if (token.type().equals(TokenType.LeftBracket)) {
             match(TokenType.LeftBracket);
             IntValue i = new IntValue(Integer.parseInt(match(TokenType.IntLiteral)));
             match(TokenType.RightBracket);
-        }
-        else
+        } else
             ds.add(new VariableDeclare(v, t));
         while (token.type().equals(TokenType.Comma)) {
             match(TokenType.Comma);
@@ -74,14 +70,13 @@ public class Parser {
                 match(TokenType.LeftBracket);
                 IntValue i = new IntValue(Integer.parseInt(match(TokenType.IntLiteral)));
                 match(TokenType.RightBracket);
-            }
-            else
+            } else
                 ds.add(new VariableDeclare(v, t));
         }
         match(TokenType.Semicolon);
     }
 
-    public Function function(Type t, String id){
+    public Function function(Type t, String id) {
         funcId = id;
         match(TokenType.LeftParen);
         Declarations params = params();
@@ -90,25 +85,25 @@ public class Parser {
         Declarations locals = declarations();
         Block body = statements();
         match(TokenType.RightBrace);
-        return new Function(t,id,params,locals,body);
+        return new Function(t, id, params, locals, body);
     }
 
-    public Function mainFunction(Type t, String id){
-        TokenType[ ] header = {TokenType.LeftParen, TokenType.RightParen};
-        for (int i=0; i<header.length; i++)   // bypass "int main ( )"
+    public Function mainFunction(Type t, String id) {
+        TokenType[] header = {TokenType.LeftParen, TokenType.RightParen};
+        for (int i = 0; i < header.length; i++)   // bypass "int main ( )"
             match(header[i]);
         match(TokenType.LeftBrace);
         Declarations params = new Declarations();
         Declarations locals = declarations();
         Block body = statements();
         match(TokenType.RightBrace);
-        return new Function(t,id,params,locals,body);
+        return new Function(t, id, params, locals, body);
     }
 
-    private Declarations params(){
+    private Declarations params() {
         // Params --> { Param }
-        Declarations ds = new Declarations ();
-        while (isType( )) {
+        Declarations ds = new Declarations();
+        while (isType()) {
             param(ds);
         }
         return ds;
@@ -126,32 +121,29 @@ public class Parser {
                 match(TokenType.LeftBracket);
                 IntValue i = new IntValue(Integer.parseInt(match(TokenType.IntLiteral)));
                 match(TokenType.RightBracket);
-            }
-            else
+            } else
                 ds.add(new VariableDeclare(v, t));
         }
     }
 
-    private Declarations declarations () {
+    private Declarations declarations() {
         // Declarations --> { Declaration }
-        Declarations ds = new Declarations ();
-        while (isType( )) {
+        Declarations ds = new Declarations();
+        while (isType()) {
             declaration(ds);
         }
         return ds;
     }
 
-    private void declaration (Declarations ds) {
+    private void declaration(Declarations ds) {
         // Declaration  --> Type Identifier [ [ Integer ] ] { , Identifier [ [ Integer ] ] } ;
         Type t = type();
         Variable v = new Variable(match(TokenType.Identifier));
-        if (token.type().equals(TokenType.LeftBracket))
-        {
+        if (token.type().equals(TokenType.LeftBracket)) {
             match(TokenType.LeftBracket);
             IntValue i = new IntValue(Integer.parseInt(match(TokenType.IntLiteral)));
             match(TokenType.RightBracket);
-        }
-        else
+        } else
             ds.add(new VariableDeclare(v, t));
         while (token.type().equals(TokenType.Comma)) {
             match(TokenType.Comma);
@@ -160,14 +152,13 @@ public class Parser {
                 match(TokenType.LeftBracket);
                 IntValue i = new IntValue(Integer.parseInt(match(TokenType.IntLiteral)));
                 match(TokenType.RightBracket);
-            }
-            else
+            } else
                 ds.add(new VariableDeclare(v, t));
         }
         match(TokenType.Semicolon);
     }
 
-    private Type type () {
+    private Type type() {
         // Type  -->  int | bool | float | char | void
         Type t = null;
         if (token.type().equals(TokenType.Int))
@@ -194,64 +185,60 @@ public class Parser {
             token = lexer.next();
             s = statements();
             match(TokenType.RightBrace);
-        }
-        else if (token.type().equals(TokenType.If))         // IfStatement
+        } else if (token.type().equals(TokenType.If))         // IfStatement
             s = ifStatement();
         else if (token.type().equals(TokenType.While))      // WhileStatement
             s = whileStatement();
         else if (token.type().equals(TokenType.Return))
             s = returnStatement();
-        else if (token.type().equals(TokenType.Identifier)){  // Assignment
+        else if (token.type().equals(TokenType.Identifier)) {  // Assignment
             String id = match(TokenType.Identifier);
-            if(token.type().equals(TokenType.LeftParen))
+            if (token.type().equals(TokenType.LeftParen))
                 s = callStatement(id);
             else
                 s = assignment(id);
-        }
-        else error("Illegal statement");
+        } else error("Illegal statement");
         return s;
     }
 
-    private CallStatement callStatement(String s){
+    private CallStatement callStatement(String s) {
         match(TokenType.LeftParen);
         Expressions args = new Expressions();
-        while(!(token.type().equals(TokenType.RightParen))){
+        while (!(token.type().equals(TokenType.RightParen))) {
             args.add(expression());
             if (!token.type().equals(TokenType.RightParen))
                 match(TokenType.Comma);
         }
         match(TokenType.RightParen);
         match(TokenType.Semicolon);
-        return new CallStatement(s,args);
+        return new CallStatement(s, args);
 
     }
 
-    private Return returnStatement(){
+    private Return returnStatement() {
         match(TokenType.Return);
         Expression returning = expression();
         match(TokenType.Semicolon);
-        return new Return(new Variable(funcId),returning);
+        return new Return(new Variable(funcId), returning);
     }
 
-    private Block statements () {
+    private Block statements() {
         // Block --> '{' Statements '}'
         Block b = new Block();
-        while (! token.type().equals(TokenType.RightBrace)) {
+        while (!token.type().equals(TokenType.RightBrace)) {
             b.statements.add(statement());
         }
         return b;
     }
 
-    private Assignment assignment (String s) {
+    private Assignment assignment(String s) {
         // Assignment --> Identifier [ [ Expression ] ] = Expression ;
         VariableRef target = null;
-        if (token.type().equals(TokenType.LeftBracket))
-        {
+        if (token.type().equals(TokenType.LeftBracket)) {
             match(TokenType.LeftBracket);
             Expression index = expression();
             match(TokenType.RightBracket);
-        }
-        else
+        } else
             target = new Variable(s);
         match(TokenType.Assign);
         Expression source = expression();
@@ -259,7 +246,7 @@ public class Parser {
         return new Assignment(target, source);
     }
 
-    private Conditional ifStatement () {
+    private Conditional ifStatement() {
         // IfStatement --> if ( Expression ) Statement [ else Statement ]
         match(TokenType.If);
         match(TokenType.LeftParen);
@@ -267,14 +254,14 @@ public class Parser {
         match(TokenType.RightParen);
         Statement thenbranch = statement();
         Statement elsebranch = new Skip();
-        if (token.type().equals(TokenType.Else)){
+        if (token.type().equals(TokenType.Else)) {
             match(TokenType.Else);
             elsebranch = statement();
         }
         return new Conditional(test, thenbranch, elsebranch);
     }
 
-    private Loop whileStatement () {
+    private Loop whileStatement() {
         // WhileStatement --> while ( Expression ) Statement
         match(TokenType.While);
         match(TokenType.LeftParen);
@@ -284,7 +271,7 @@ public class Parser {
         return new Loop(test, body);
     }
 
-    private Expression expression () {
+    private Expression expression() {
         // Expression --> Conjunction { || Conjunction }
         Expression e = conjunction();
         while (token.type().equals(TokenType.Or)) {
@@ -295,7 +282,7 @@ public class Parser {
         return e;
     }
 
-    private Expression conjunction () {
+    private Expression conjunction() {
         // Conjunction --> Equality { && Equality }
         Expression e = equality();
         while (token.type().equals(TokenType.And)) {
@@ -306,7 +293,7 @@ public class Parser {
         return e;
     }
 
-    private Expression equality () {
+    private Expression equality() {
         // Equality --> Relation [ EquOp Relation ]
         Expression e = relation();
         while (isEqualityOp()) {
@@ -317,10 +304,10 @@ public class Parser {
         return e;
     }
 
-    private Expression relation (){
+    private Expression relation() {
         // Relation --> Addition [RelOp Addition]
         Expression e = addition();
-        while (isRelationalOp()){
+        while (isRelationalOp()) {
             Operator op = new Operator(match(token.type()));
             Expression term2 = addition();
             e = new Binary(op, e, term2);
@@ -328,7 +315,7 @@ public class Parser {
         return e;
     }
 
-    private Expression addition () {
+    private Expression addition() {
         // Addition --> Term { AddOp Term }
         Expression e = term();
         while (isAddOp()) {
@@ -339,7 +326,7 @@ public class Parser {
         return e;
     }
 
-    private Expression term () {
+    private Expression term() {
         // Term --> Factor { MultiplyOp Factor }
         Expression e = factor();
         while (isMultiplyOp()) {
@@ -356,12 +343,11 @@ public class Parser {
             Operator op = new Operator(match(token.type()));
             Expression term = primary();
             return new Unary(op, term);
-        }
-        else return primary();
+        } else return primary();
     }
 
 
-    private Expression primary () {
+    private Expression primary() {
         // Primary --> Identifier [ [ Expression ] ] | Literal | ( Expression )
         //             | Type ( Expression )
         Expression e = null;
@@ -371,17 +357,17 @@ public class Parser {
                 match(TokenType.LeftBracket);
                 Expression index = expression();
                 match(TokenType.RightBracket);
-            }else if(token.type().equals(TokenType.LeftParen)){
+            } else if (token.type().equals(TokenType.LeftParen)) {
                 match(TokenType.LeftParen);
                 Expressions args = new Expressions();
-                while(!(token.type().equals(TokenType.RightParen))){
+                while (!(token.type().equals(TokenType.RightParen))) {
                     args.add(expression());
                     if (!token.type().equals(TokenType.RightParen))
                         match(TokenType.Comma);
                 }
                 match(TokenType.RightParen);
-                e = new CallExpression(s,args);
-            }else {
+                e = new CallExpression(s, args);
+            } else {
                 e = new Variable(s);
             }
         } else if (isLiteral()) {
@@ -390,7 +376,7 @@ public class Parser {
             match(TokenType.LeftParen);
             e = expression();
             match(TokenType.RightParen);
-        } else if (isType( )) {
+        } else if (isType()) {
             Operator op = new Operator(match(token.type()));
             match(TokenType.LeftParen);
             Expression term = expression();
@@ -400,7 +386,7 @@ public class Parser {
         return e;
     }
 
-    private Value literal( ) {
+    private Value literal() {
         String s = null;
         switch (token.type()) {
             case IntLiteral:
@@ -419,39 +405,39 @@ public class Parser {
                 s = match(TokenType.FloatLiteral);
                 return new FloatValue(Float.parseFloat(s));
         }
-        throw new IllegalArgumentException( "should not reach here");
+        throw new IllegalArgumentException("should not reach here");
     }
 
 
-    private boolean isAddOp( ) {
+    private boolean isAddOp() {
         return token.type().equals(TokenType.Plus) ||
                 token.type().equals(TokenType.Minus);
     }
 
-    private boolean isMultiplyOp( ) {
+    private boolean isMultiplyOp() {
         return token.type().equals(TokenType.Multiply) ||
                 token.type().equals(TokenType.Divide) ||
                 token.type().equals(TokenType.Modulus);
     }
 
-    private boolean isUnaryOp( ) {
+    private boolean isUnaryOp() {
         return token.type().equals(TokenType.Not) ||
                 token.type().equals(TokenType.Minus);
     }
 
-    private boolean isEqualityOp( ) {
+    private boolean isEqualityOp() {
         return token.type().equals(TokenType.Equals) ||
                 token.type().equals(TokenType.NotEqual);
     }
 
-    private boolean isRelationalOp( ) {
+    private boolean isRelationalOp() {
         return token.type().equals(TokenType.Less) ||
                 token.type().equals(TokenType.LessEqual) ||
                 token.type().equals(TokenType.Greater) ||
                 token.type().equals(TokenType.GreaterEqual);
     }
 
-    private boolean isType( ) {
+    private boolean isType() {
         return token.type().equals(TokenType.Int)
                 || token.type().equals(TokenType.Bool)
                 || token.type().equals(TokenType.Float)
@@ -459,20 +445,20 @@ public class Parser {
                 || token.type().equals(TokenType.Void);
     }
 
-    private boolean isLiteral( ) {
+    private boolean isLiteral() {
         return token.type().equals(TokenType.IntLiteral) ||
                 isBooleanLiteral() ||
                 token.type().equals(TokenType.FloatLiteral) ||
                 token.type().equals(TokenType.CharLiteral);
     }
 
-    private boolean isBooleanLiteral( ) {
+    private boolean isBooleanLiteral() {
         return token.type().equals(TokenType.True) ||
                 token.type().equals(TokenType.False);
     }
 
     public static void main(String args[]) {
-        Parser parser  = new Parser(new Lexer(args[0]));
+        Parser parser = new Parser(new Lexer(args[0]));
         Program prog = parser.program();
         prog.display();      // display abstract syntax tree
     } //main

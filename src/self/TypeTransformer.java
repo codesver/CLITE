@@ -79,8 +79,8 @@ public class TypeTransformer {
         if (s instanceof Conditional) {
             Conditional c = (Conditional) s;
             Expression test = T(c.test, tm);
-            Statement tbr = T(c.thenbranch, tm);
-            Statement ebr = T(c.elsebranch, tm);
+            Statement tbr = T(c.thenBranch, tm);
+            Statement ebr = T(c.elseBranch, tm);
             return new Conditional(test, tbr, ebr);
         }
         if (s instanceof Loop) {
